@@ -1,0 +1,50 @@
+name: test
+
+on:
+  pull_request:
+    paths:
+      - include/**
+      - src/**
+      - tests/**
+      - CMakeLists.txt
+  push:
+    paths:
+      - include/**
+      - src/**
+      - tests/**
+      - CMakeLists.txt
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    container: ghcr.io/lesomnus/dev-gcc:13
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure
+        run: |
+          cmake \
+            -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake \
+            -DCMAKE_BUILD_TYPE:STRING=Debug \
+            -S . \
+            -B ./build \
+            -G Ninja
+
+      - name: Build
+        run: |
+          cmake \
+            --build ./build \
+            --config Debug \
+            --target test-all
+
+      - name: Test
+        run: |
+          cmake \
+            --build ./build \
+            --config Debug \
+            --target coverage
+
+      - uses: codacy/codacy-coverage-reporter-action@v1.3.0
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: ./build/coverage.info
