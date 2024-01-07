@@ -3,12 +3,14 @@ name: test
 on:
   pull_request:
     paths:
+      - .github/**
       - include/**
       - src/**
       - tests/**
       - CMakeLists.txt
   push:
     paths:
+      - .github/**
       - include/**
       - src/**
       - tests/**
@@ -38,6 +40,8 @@ jobs:
             --target test-all
 
       - name: Test
+        env:
+          CTEST_OUTPUT_ON_FAILURE: 1
         run: |
           cmake \
             --build ./build \
