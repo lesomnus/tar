@@ -3,12 +3,14 @@ name: test
 on:
   pull_request:
     paths:
+      - .github/**
       - include/**
       - src/**
       - tests/**
       - CMakeLists.txt
   push:
     paths:
+      - .github/**
       - include/**
       - src/**
       - tests/**
